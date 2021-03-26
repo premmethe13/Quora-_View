@@ -16,39 +16,41 @@ def get_proxies():
             Proxies.append(proxy)
     return Proxies
 
-proxies = get_proxies()
-proxy_pool = cycle(proxies)
-j = 0
-url = 'https://httpbin.org/ip'
-for i in range(1,21):  ##This is range for IP addresses
-    # Get a proxy from the pool
-    proxy = next(proxy_pool)
-    print("Request #%d" % i)
+def proxies(URL, No_of_IP):
+    proxies = get_proxies()
+    proxy_pool = cycle(proxies)
+    j = 0
+    url = 'https://httpbin.org/ip'
+    for i in range(1, No_of_IP):
+        # Get a proxy from the pool
+        proxy = next(proxy_pool)
+        print("Request #%d" % i)
 
-    try:
-        response = requests.get(url, proxies={"http": proxy, "https": proxy})
-        result = response.json()
-    except:
-        # Most free proxies will often get connection errors.
-        # You will have retry the entire request using another proxy to work.
-        # We will just skip retries as its beyond the scope of this tutorial and we are only downloading a single url
-        result = "Skipping, Connection error"
-
-    print(result)
-
-    if result != "Skipping, Connection error":
-        j += 1
-        webdriver.DesiredCapabilities.CHROME['proxy'] = {"httpProxy": proxy, "ftpProxy": proxy, "sslProxy": proxy,
-                                                         "proxyType": "MANUAL", }
-        driver = webdriver.Chrome("chromedriver.exe")
         try:
-            # time.sleep(5)
-            driver.get("https://www.quora.com/What-are-the-courses-available-in-India-for-forensic-accounting/answer/Rajendra-Kulkarni-25?ch=10&share=cf51abc3&srid=uxNxBI")
-            #time.sleep(5)
-            #contents = driver.find_element_by_partial_link_text("what is my ip")
-            #contents.click()
+            response = requests.get(url, proxies={"http": proxy, "https": proxy})
+            result = response.json()
         except:
-            print("Not")
-        driver.close()
+            # Most free proxies will often get connection errors.
+            # You will have retry the entire request using another proxy to work.
+            # We will just skip retries as its beyond the scope of this tutorial and we are only downloading a single url
+            result = "Skipping, Connection error"
 
-print(j)
+        print(result)
+
+        if result != "Skipping, Connection error":
+            j += 1
+            webdriver.DesiredCapabilities.CHROME['proxy'] = {"httpProxy": proxy, "ftpProxy": proxy, "sslProxy": proxy,
+                                                            "proxyType": "MANUAL", }
+            driver = webdriver.Chrome("E:\Projects\Web Scraping\chromedriver.exe")
+            try:
+                # time.sleep(5)
+                driver.get(url=URL)
+                # time.sleep(5)
+                # contents = driver.find_element_by_partial_link_text("what is my ip")
+                # contents.click()
+            except:
+                print("Not")
+            driver.close()
+    j = str(j)
+
+    return "<h2>IP's hitting on URL: %s"%(j)+"</h2>"
