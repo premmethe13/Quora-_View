@@ -2,8 +2,6 @@ import requests
 from lxml.html import fromstring
 from itertools import cycle
 
-from selenium import webdriver
-
 def get_proxies():
     URL = 'https://free-proxy-list.net/'
     responses = requests.get(URL)
@@ -27,7 +25,7 @@ def proxies(URL, No_of_IP):
         print("Request #%d" % i)
 
         try:
-            response = requests.get(url, proxies={"http": proxy, "https": proxy})
+            response = requests.get(url, proxies={"http": proxy, "https": proxy}, timeout=15)
             result = response.json()
         except:
             # Most free proxies will often get connection errors.
@@ -39,18 +37,10 @@ def proxies(URL, No_of_IP):
 
         if result != "Skipping, Connection error":
             j += 1
-            webdriver.DesiredCapabilities.CHROME['proxy'] = {"httpProxy": proxy, "ftpProxy": proxy, "sslProxy": proxy,
-                                                            "proxyType": "MANUAL", }
-            driver = webdriver.Chrome("E:\Projects\Web Scraping\chromedriver.exe")
             try:
-                # time.sleep(5)
-                driver.get(url=URL)
-                # time.sleep(5)
-                # contents = driver.find_element_by_partial_link_text("what is my ip")
-                # contents.click()
+                requests.get(URL, proxies={"http": proxy, "https": proxy}, timeout=20)
             except:
                 print("Not")
-            driver.close()
     j = str(j)
 
     return "<h2>IP's hitting on URL: %s"%(j)+"</h2>"
